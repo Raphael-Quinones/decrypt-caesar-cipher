@@ -1,6 +1,7 @@
 import string
 import textstat
 import random
+import streamlit as st
 from langdetect import detect
 from collections import Counter
 
@@ -75,20 +76,31 @@ def get_random_splice(text): # Used for testing a small string from the whole te
         return ' '.join(words[start_index:end_index])
     
 def main():# Driver function
-    encrypted_text = "Pmdyval pa pu jpwolyl slaalyz vm aol hswohila, aoha uva h dvyk jvbsk il thkl vba.."
-    spliced_text = get_random_splice(encrypted_text) # Get sample first, before encrypting the whole text
+    st.title("Caesar Cipher Decryptor")
+    st.write("Made by Raphael Quinones")
+    st.markdown("[Source Code](https://github.com/Raphael-Quinones/decrypt-caesar-cipher)")
 
-    first_try, key = caesar_freqanalysis(spliced_text) # Try frequency analysis first before bruteforcing
-    if is_readable(first_try): # If the text is 'readable' it means it's been decrypted
-        print("Freqal won!")
-        plaintext = caesar_encrypt(encrypted_text, key) # After decrypting the sample, decrypt the whole text
-        print(plaintext)
-    else:
-        print("Bruteforce won!")
-        _encryptedsplice, key = caesar_bruteforce(spliced_text) # Extract just the key
-        plaintext = caesar_encrypt(encrypted_text, key) # After decrypting the sample, decrypt the whole text
-        print(plaintext)
 
+
+    encrypted_text = st.text_input("Enter the encrypted text here")
+    if (encrypted_text):
+        spliced_text = get_random_splice(encrypted_text) # Get sample first, before encrypting the whole text
+
+        first_try, key = caesar_freqanalysis(spliced_text) # Try frequency analysis first before bruteforcing
+        if is_readable(first_try): # If the text is 'readable' it means it's been decrypted
+            print("Freqal won!")
+            plaintext, key = caesar_encrypt(encrypted_text, key) # After decrypting the sample, decrypt the whole text
+            st.write("Decrypted:" + plaintext)
+            st.write("Key shift: " + str(key))
+
+        else:
+            print("Bruteforce won!")
+            _encryptedsplice, key = caesar_bruteforce(spliced_text) # Extract just the key
+            plaintext,key  = caesar_encrypt(encrypted_text, key) # After decrypting the sample, decrypt the whole text
+            st.write(plaintext)
+            st.write("Key shift: " + str(key))
+
+        st.write("Refresh to decrypt another text")
     
 if __name__ == "__main__":
     main()
